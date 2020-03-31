@@ -24,7 +24,11 @@
 </section>
 
     <script>
-      var websocket = new WebSocket("ws://localhost:1234");
+      var address = "34.65.73.53"
+      var port = "9000"
+      var ws_address = "ws://" + address + ":" + port
+
+      var websocket = new WebSocket(ws_address);
       var chatroom = $("#chatroom");
       //var feedback = $("#feedback");
 
