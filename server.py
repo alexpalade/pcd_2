@@ -1,5 +1,6 @@
 import asyncio
 import json
+import argparse
 
 import websockets
 
@@ -43,7 +44,16 @@ async def handle(websocket, path):
 
         await unregister(websocket)
 
-start_server = websockets.serve(handle, "localhost", 1234)
+if __name__ == "__main__":
+        parser = argparse.ArgumentParser(description='Chat application server')
+        parser.add_argument('--port', '-p', default=9000, help='which port to listen at')
 
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+        args = parser.parse_args()
+
+        address = "0.0.0.0"
+
+        start_server = websockets.serve(handle, address, args.port)
+        print("websockets listening at {}:{}".format(address, args.port))
+
+        asyncio.get_event_loop().run_until_complete(start_server)
+        asyncio.get_event_loop().run_forever()
