@@ -7,6 +7,15 @@
 </head>
 <body>
 
+<h2>PCD Chat</h2>
+
+<section>
+      <div id="search_user">
+	    <input id="search" type="text" />
+	    <button id="search_user_button" type="button" onclick="searchUser()">Search user</button>
+      </div>
+</section>
+
 <section>
       <div id="change_username">
 	    <input id="username" type="text" />
@@ -43,6 +52,11 @@
       function sendUsername(){
             var username = document.getElementById("username").value;
             websocket.send(JSON.stringify({user : username, mess: null}));
+      }
+    
+      function searchUser(){
+          var username = document.getElementById("search").value;
+          window.open("https://us-central1-chrome-ranger-269418.cloudfunctions.net/func3" + "?username=" + username, '_blank');
       }
 
       websocket.onmessage = function (event) {
