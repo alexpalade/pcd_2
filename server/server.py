@@ -2,6 +2,7 @@ import asyncio
 import json
 import argparse
 
+import requests
 import websockets
 
 import google
@@ -11,17 +12,11 @@ from firebase_admin import firestore
 
 users = set()
 
-# notifica userii ca un user a intrat sau a iesit din aplicatie
-# trebuie sa mai lucrez la functia asta
-async def notify_users():
-        if users:
-                message = "New user connected"
-                await asyncio.wait([user.send(message) for user in users])
-
-
-async def send_users_message(message):
-        await asyncio.wait([user.send(message) for user in users])
-
+async def post(message):
+    r"""Posts message to Google Pub/Sub server """
+    res = requests.post('http://localhost:6666/pubsub/test', json={"data": message})
+    if res.ok:
+        return res.json()
 
 async def send_user_chat_history(user):
         global index
@@ -73,12 +68,12 @@ async def handle(websocket, path):
                 if data["user"] is not None and data["mess"] is None:
                         print("User connected :  ", data["user"])
                         log_user_connected(data["user"])
-                        await send_users_message("User " + data["user"] + " now connected.")
+                        await post("User " + data["user"] + " now connected.")
 
                 if data["mess"] is not None:
                         print("Message from " + data["user"] + ":" + data["mess"])
                         log_message(data["user"], data["mess"])
-                        await send_users_message("Message from " + data["user"] + " : " + data["mess"])
+                        await post("Message from " + data["user"] + " : " + data["mess"])
 
         await unregister(websocket)
 
@@ -120,7 +115,7 @@ if __name__ == "__main__":
         print("websockets listening at {}:{}".format(address, args.port))
 
         # initialize Firebase
-        cred = credentials.Certificate('/www/firebase-credentials.json')
+        cred = credentials.Certificate('www/firestore-credentials.json')
         firebase_admin.initialize_app(cred)
         db = firestore.client()
 
