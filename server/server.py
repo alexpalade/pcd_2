@@ -120,7 +120,7 @@ if __name__ == "__main__":
         print("websockets listening at {}:{}".format(address, args.port))
 
         # initialize Firebase
-        cred = credentials.Certificate('/home/alexpalade/firebase-credentials.json')
+        cred = credentials.Certificate('/www/firebase-credentials.json')
         firebase_admin.initialize_app(cred)
         db = firestore.client()
 
